@@ -6,7 +6,7 @@
 #include "drivercommon.h"
 #include "commonhelpers.h"
 
-// the caller must acquire lock for it
+// the caller must acquire lock for it & check for existence before pushing
 void PushItem(__in LIST_ENTRY* entry, __in LIST_ENTRY* entryHead, __inout int& currentItemCount, __in int maxItemCount)
 {
     if (currentItemCount > maxItemCount)
@@ -18,7 +18,7 @@ void PushItem(__in LIST_ENTRY* entry, __in LIST_ENTRY* entryHead, __inout int& c
     }
 
     //// get the path from inserted item
-    //auto entryItem = CONTAINING_RECORD(entry, CyStackItem<RegistryKeyProtectInfo>, Entry);
+    //auto entryItem = CONTAINING_RECORD(entry, DOItem<RegistryKeyProtectInfo>, Entry);
     //if (entryItem == NULL || entryItem->Data.KeyName == NULL) {
     //    return;
     //}
@@ -65,7 +65,7 @@ void MtViewItem(LIST_ENTRY* entryHead, ItemType itemType, int currentItemCount, 
                 switch (itemType) {
                 case ItemType::ProgramBlockPath:
                 {
-                    // info will has the format as a pointer to a CyStackItem Struct
+                    // info will has the format as a pointer to a DOItem Struct
                     auto info = CONTAINING_RECORD(pEntry, DOItem<ProcessMonitorInfo>, Entry);
                     auto kName = info->Data.ProcessPath;
                     UNICODE_STRING procPath;
@@ -101,7 +101,7 @@ NTSTATUS FindItem(__in PUNICODE_STRING pTargetItem, __in LIST_ENTRY* entryHead, 
                 switch (itemType) {
                 case ItemType::ProgramBlockPath:
                 {
-                    // info will has the format as a pointer to a CyStackItem Struct
+                    // info will has the format as a pointer to a DOItem Struct
                     auto info = CONTAINING_RECORD(pEntry, DOItem<ProcessMonitorInfo>, Entry);
                     // if node is not what we are looking for, continue to find in other nodes
                     if (info == NULL || info->Data.ProcessPath == NULL) {

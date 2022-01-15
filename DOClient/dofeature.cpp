@@ -18,8 +18,16 @@ void DisplayNotification(BYTE* buffer, DWORD size) {
             // command line is located a (command line offset) size starting from buffer base address
             std::wstring commandline((WCHAR*)(buffer + info->CommandLineOffset), info->CommandLineLength);
             // display noti in console
-            printf("Process %d Created. Command line: %ws\n", info->ProcessId,
-                commandline.c_str());
+            if (info->Status == ItemStatus::Success) {
+                printf("\n\t> Process %d Created.\n\t> Command line: %ws\n", info->ProcessId,
+                    commandline.c_str());
+            } else if (info->Status == ItemStatus::Blocked) {
+                printf("\n\t> Block Process %d in creation.\n\t> Command line: %ws\n", info->ProcessId,
+                    commandline.c_str());
+            } else {
+                printf("\n\t> Status unknown for Process %d in creation.\n\t> Command line: %ws\n", info->ProcessId,
+                    commandline.c_str());
+            }
             // todo: display noti for registerd process in popup (Windows 10 - powershell)
             break;
         }
@@ -30,7 +38,7 @@ void DisplayNotification(BYTE* buffer, DWORD size) {
             // extract info of noti from buffer
             auto info = (ProcessExitInfo*)buffer;
             // display noti in console
-            printf("Process %d Exited\n", info->ProcessId);
+            printf("\n\t> Process %d Exited\n", info->ProcessId);
             // todo: display noti for registerd process in popup (Windows 10 - powershell)
             break;
         }

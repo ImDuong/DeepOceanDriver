@@ -15,6 +15,11 @@ enum class ItemType : short {
 	ProgramBlockPath, ProgramUnblockPath
 };
 
+enum class ItemStatus : short {
+	Success,
+	Blocked,
+};
+
 struct ItemHeader {
 	// event type
 	ItemType Type;
@@ -55,6 +60,7 @@ struct ProcessCreateInfo : ItemHeader {
 	ULONG ParentProcessId;
 	USHORT CommandLineLength;
 	USHORT CommandLineOffset;
+	ItemStatus Status;
 };
 
 const int MaxProcessPathSize = 520;

@@ -2,12 +2,14 @@
 #include "notifyroutine.h"
 #include "datastore.h"
 #include "drivercommon.h"
+#include "linkedlisthelpers.h"
 
 #include "autolock.h"
 
 extern Globals g_Globals;
 
-void PushItem(LIST_ENTRY* entry) {
+// can replace this function with helper in linkedlisthelpers.cpp but we still keep it here for a simple tutorial for beginners
+void PushProcNotiItem(LIST_ENTRY* entry) {
 	// since linked list may be accessed concurrently by multiple threads, protect it with a mutex or a fast mutex
 	// lock the fast mutex
 	AutoLock<FastMutex> lock(g_Globals.ProcNotiLock);
@@ -34,10 +36,36 @@ void PushItem(LIST_ENTRY* entry) {
 }
 
 void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_opt_ PPS_CREATE_NOTIFY_INFO CreateInfo) {
-
 	UNREFERENCED_PARAMETER(Process);
+	NTSTATUS status = STATUS_SUCCESS;
+	bool isBlock = false;
+	// process create
 	if (CreateInfo) {
-		// process create
+		if (g_Globals.ProgItemsCount > 0) {
+			if (CreateInfo->FileOpenNameAvailable && CreateInfo->ImageFileName)
+			{
+				KdPrint((DO_DRIVER_PREFIX "ImageFilePath: %wZ\n", CreateInfo->ImageFileName));
+
+				AutoLock<FastMutex> lock(g_Globals.ProgLock);
+
+				PLIST_ENTRY foundEntry = nullptr;
+				UNICODE_STRING imgFileName;
+				RtlInitUnicodeString(&imgFileName, CreateInfo->ImageFileName->Buffer);
+				status = FindItem(&imgFileName, &g_Globals.ProgItemsHead, ItemType::ProgramBlockPath, g_Globals.ProgItemsCount, &foundEntry);
+				if (!NT_SUCCESS(status)) {
+					// use status for logging
+					return;
+				}
+
+				// only block if the item does exist in the list
+				if (foundEntry != nullptr) {
+					isBlock = true;
+					CreateInfo->CreationStatus = STATUS_ACCESS_DENIED;
+					KdPrint((DO_DRIVER_PREFIX "Program not allowed to Execute: %wZ\n", CreateInfo->ImageFileName));
+				}
+			}
+		}
+
 
 		// allocate the total size of allocation for DOItem<T>
 		USHORT allocSize = sizeof(DOItem<ProcessCreateInfo>);
@@ -63,6 +91,13 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 		KeQuerySystemTimePrecise(&item.Time);
 		// set type
 		item.Type = ItemType::ProcessCreate;
+		// set status
+		if (isBlock) {
+			item.Status = ItemStatus::Blocked;
+		}
+		else {
+			item.Status = ItemStatus::Success;
+		}
 		// set process id
 		item.ProcessId = HandleToULong(ProcessId);
 		// set parent process id
@@ -82,7 +117,7 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 			item.CommandLineLength = 0;
 		}
 		// push data to linked list
-		PushItem(&info->Entry);
+		PushProcNotiItem(&info->Entry);
 	}
 	else {
 		// process exit
@@ -106,6 +141,6 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 
 		// push data to linked list
 		// our global linked list will contain only entry of DOItem<ProcessExitInfo>
-		PushItem(&info->Entry);
+		PushProcNotiItem(&info->Entry);
 	}
 }
