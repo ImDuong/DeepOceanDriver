@@ -4,8 +4,6 @@
 
 #include "sysmon.h"
 #include "notifyroutine.h"
-#include "operationcallback.h"
-#include "registrynotifyroutine.h"
 
 UNICODE_STRING devName = RTL_CONSTANT_STRING(L"\\Device\\S1mpleDevice");
 UNICODE_STRING symLink = RTL_CONSTANT_STRING(L"\\??\\S1mpleDevice");
@@ -15,15 +13,6 @@ Globals g_Globals;
 void S1mpleUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	// undo anything done in DriverEntry in reverse order with respect to the init order in driver entry
 	
-	// unregister registry notification
-	CmUnRegisterCallback(g_Globals.RegCookie);
-
-	// unregister image load notification 
-	PsRemoveLoadImageNotifyRoutine(OnImageLoadNotify);
-
-	// unregister thread notification 
-	PsRemoveCreateThreadNotifyRoutine(OnThreadNotify);
-
 	// unregister process notification 
 	PsSetCreateProcessNotifyRoutineEx(OnProcessNotify, TRUE);
 
@@ -32,9 +21,6 @@ void S1mpleUnload(_In_ PDRIVER_OBJECT DriverObject) {
 
 	// delete device object
 	IoDeleteDevice(DriverObject->DeviceObject);
-
-	// unregister callback
-	ObUnRegisterCallbacks(g_Globals.RegHandle);
 
 	// free linked list
 	// because we already unregister process, thread, image load notification -> no need to acquire mutex for freeing linked list
@@ -45,7 +31,6 @@ void S1mpleUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	}
 
 	// free linked list for registry
-
 	KdPrint(("S1mple Driver unload successfully\n"));
 }
 
@@ -57,39 +42,14 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 	// init global variables
 	g_Globals.Init();
 
-	OB_OPERATION_REGISTRATION operations[] = {
-		{
-			PsProcessType,		// object type: process
-			OB_OPERATION_HANDLE_CREATE | OB_OPERATION_HANDLE_DUPLICATE,
-			OnPreOpenProcess, nullptr	// pre, post operation
-		}
-	};
-	OB_CALLBACK_REGISTRATION reg = {
-		OB_FLT_REGISTRATION_VERSION,
-		1,				// operation count
-		RTL_CONSTANT_STRING(L"12345.6969"),		// altitude: higher altitude, the earlier the driver is invoked
-		nullptr,		// context
-		operations
-	};
-
-
 	PDEVICE_OBJECT DeviceObject = nullptr;
 	auto status = STATUS_SUCCESS;
 	auto symLinkCreated = false;
 	auto processCallBackCreated = false;
-	auto threadCallBackCreated = false;
-	auto imageLoadCallBackCreated = false;
 
 
 	// use one loop technique for avoiding the use of goto
 	do {
-		status = ObRegisterCallbacks(&reg, &g_Globals.RegHandle);
-		if (!NT_SUCCESS(status)) {
-			KdPrint(("failed to register callbacks (status=%08X)\n", status));
-			break;
-		}
-
-
 		// create device obj
 		status = IoCreateDevice(
 			_In_ DriverObject,					// driver obj
@@ -124,40 +84,9 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 			break;
 		}
 		processCallBackCreated = true;
-
-		// register for thread notifications
-		status = PsSetCreateThreadNotifyRoutine(OnThreadNotify);
-		if (!NT_SUCCESS(status)) {
-			KdPrint(("Failed to register thread callback (0x%08X)\n", status));
-			break;
-		}
-		threadCallBackCreated = true;
-
-		status = PsSetLoadImageNotifyRoutine(OnImageLoadNotify);
-		if (!NT_SUCCESS(status)) {
-			KdPrint(("failed to set image load callback (status=%08X)\n", status));
-			break;
-		}
-		imageLoadCallBackCreated = true;
-
-		UNICODE_STRING altitude = RTL_CONSTANT_STRING(L"7657.124");
-		status = CmRegisterCallbackEx(OnRegistryNotify, &altitude, DriverObject, nullptr, &g_Globals.RegCookie, nullptr);
-		if (!NT_SUCCESS(status)) {
-			KdPrint(("failed to set registry callback (status=%08X)\n", status));
-			break;
-		}
-
 	} while (false);
 
 	if (!NT_SUCCESS(status)) {
-		if (imageLoadCallBackCreated) {
-			PsRemoveLoadImageNotifyRoutine(OnImageLoadNotify);
-		}
-
-		if (threadCallBackCreated) {
-			PsRemoveCreateThreadNotifyRoutine(OnThreadNotify);
-		}
-
 		if (processCallBackCreated) {
 			PsSetCreateProcessNotifyRoutineEx(OnProcessNotify, TRUE);
 		}
@@ -170,10 +99,6 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 		// if device obj has been constructed, delete it to avoid memory leak
 		if (DeviceObject) {
 			IoDeleteDevice(DeviceObject);
-		}
-
-		if (g_Globals.RegHandle) {
-			ObUnRegisterCallbacks(g_Globals.RegHandle);
 		}
 	}
 
@@ -190,16 +115,11 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 	}
 
 	// attach operations
-	DriverObject->DriverUnload = S1mpleUnload;
-
 	DriverObject->MajorFunction[IRP_MJ_CREATE] = S1mpleCreateClose;
 	DriverObject->MajorFunction[IRP_MJ_CLOSE] = S1mpleCreateClose;
-	DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = S1mpleDeviceControl;
-	//DriverObject->MajorFunction[IRP_MJ_READ] = S1mpleRead;
+	DriverObject->DriverUnload = S1mpleUnload;
+
 	DriverObject->MajorFunction[IRP_MJ_READ] = SysMonRead;
-	DriverObject->MajorFunction[IRP_MJ_WRITE] = S1mpleWrite;
-
 	KdPrint(("S1mple Driver init successfully\n"));
-
 	return STATUS_SUCCESS;
 }

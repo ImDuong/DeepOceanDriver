@@ -43,6 +43,7 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>S1mpleDriver</RootNamespace>
     <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <ProjectName>DODriver</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -125,11 +126,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <TargetName>S1mp</TargetName>
+    <TargetName>deocdrv</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <TargetName>S1mp</TargetName>
+    <TargetName>deocdrv</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -175,9 +176,6 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="operationcallback.cpp" />
-    <ClCompile Include="registrynotifyroutine.cpp" />
-    <ClCompile Include="s1mpledispatchroutine.cpp" />
     <ClCompile Include="fastmutex.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="notifyroutine.cpp" />
@@ -192,9 +190,7 @@
     <ClInclude Include="dispatchroutine.h" />
     <ClInclude Include="fastmutex.h" />
     <ClInclude Include="notifyroutine.h" />
-    <ClInclude Include="operationcallback.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="registrynotifyroutine.h" />
     <ClInclude Include="s1mplecommon.h" />
     <ClInclude Include="sysmon.h" />
   </ItemGroup>

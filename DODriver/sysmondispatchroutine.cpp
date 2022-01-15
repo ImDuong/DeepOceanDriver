@@ -7,6 +7,27 @@
 
 extern Globals g_Globals;
 
+NTSTATUS CompleteIrp(PIRP Irp, NTSTATUS status, ULONG_PTR info) {
+	// set status of this request
+	Irp->IoStatus.Status = status;
+	Irp->IoStatus.Information = info;
+	// propagate the IRP back to its creator (I/O Manager, Plug & Play Manager or Power Manager)
+	IoCompleteRequest(Irp, IO_NO_INCREMENT);
+	return status;
+}
+
+NTSTATUS
+S1mpleCreateClose(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp) {
+	UNREFERENCED_PARAMETER(DeviceObject);
+	return CompleteIrp(Irp, STATUS_SUCCESS);
+	//// set status of this request
+	//Irp->IoStatus.Status = STATUS_SUCCESS;
+	//Irp->IoStatus.Information = 0;
+	//// propagate the IRP back to its creator (I/O Manager, Plug & Play Manager or Power Manager)
+	//IoCompleteRequest(Irp, IO_NO_INCREMENT);
+	//return STATUS_SUCCESS;
+}
+
 NTSTATUS
 SysMonRead(_In_ PDEVICE_OBJECT DeviceObject, _In_ PIRP Irp) {
 	UNREFERENCED_PARAMETER(DeviceObject);
