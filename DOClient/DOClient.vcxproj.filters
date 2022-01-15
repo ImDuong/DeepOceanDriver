@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="S1mpleClient.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KernelComm.cpp">
+    <ClCompile Include="kernelcomm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="helpers.cpp">
@@ -35,7 +35,10 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KernelComm.h">
+    <ClInclude Include="kernelcomm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="datastore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

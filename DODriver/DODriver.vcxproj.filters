@@ -17,6 +17,18 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
+    <Filter Include="Source Files\routine">
+      <UniqueIdentifier>{7dea1427-0edf-4cee-ac56-25a0b3e7411c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\routine">
+      <UniqueIdentifier>{fa375a2c-a5de-41e5-828c-0ba3140b63be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mutex">
+      <UniqueIdentifier>{ea87efc6-3024-45dd-8bf3-f69073c325cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mutex">
+      <UniqueIdentifier>{a30033f0-838e-4156-b7aa-2af2d413b1dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -25,37 +37,37 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fastmutex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="notifyroutine.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\routine</Filter>
     </ClCompile>
-    <ClCompile Include="sysmondispatchroutine.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="dispatchroutine.cpp">
+      <Filter>Source Files\routine</Filter>
+    </ClCompile>
+    <ClCompile Include="fastmutex.cpp">
+      <Filter>Source Files\mutex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fastmutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="s1mplecommon.h">
+    <ClInclude Include="drivercommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sysmon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="autolock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="notifyroutine.h">
+    <ClInclude Include="datastore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dispatchroutine.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\routine</Filter>
+    </ClInclude>
+    <ClInclude Include="notifyroutine.h">
+      <Filter>Header Files\routine</Filter>
+    </ClInclude>
+    <ClInclude Include="autolock.h">
+      <Filter>Header Files\mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="fastmutex.h">
+      <Filter>Header Files\mutex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

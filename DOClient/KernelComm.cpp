@@ -1,7 +1,8 @@
 #include "pch.h"
-#include "KernelComm.h"
+#include "kernelcomm.h"
 #include "helpers.h"
-#include "..\DODriver\S1mpleCommon.h"
+#include "datastore.h"
+#include "..\DODriver\drivercommon.h"
 
 HANDLE hDevice;
 
@@ -10,24 +11,25 @@ HANDLE GetDeviceHandle() {
 }
 
 int OpenDevice() {
-    // open handle to S1mple Device
+    // open handle to Deep Ocean Device
     // this API reaches IRP_MJ_CREATE dispatch routine of driver
-    hDevice = CreateFile(L"\\\\.\\S1mpleDevice", GENERIC_READ | GENERIC_WRITE,
+    hDevice = CreateFile(DEOC_DEVICE, GENERIC_READ | GENERIC_WRITE,
         0, nullptr, OPEN_EXISTING, 0, nullptr);
     if (hDevice == INVALID_HANDLE_VALUE)
         return Error("Failed to open device");
-    printf("opening device...\n");
+    std::cout << "opening " << DEOC_DEVICE_NAME << " device...\n";
     return 0;
 }
 
 int CloseDevice() {
     if (hDevice) {
         CloseHandle(hDevice);
-        printf("closing device...");
+        std::cout << "closing " << DEOC_DEVICE_NAME << " device...\n";
     }
     return 0;
 }
 
+// this function allow client to read information with buffer without checking whether read buffer size is different from expected maximum buffer size -> loose read technique
 int KernelLooseRead(LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead) {
     //printf("Address stored in buffer after passing: %p\n", lpBuffer);
     BOOL ok = ::ReadFile(hDevice, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, nullptr);

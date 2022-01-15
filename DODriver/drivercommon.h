@@ -1,7 +1,5 @@
 #pragma once
 
-#define S1MPLE_DEVICE 0x8069
-
 enum class ItemType : short {
 	None, 
 	ProcessCreate, 

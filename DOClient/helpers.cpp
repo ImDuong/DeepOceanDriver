@@ -16,16 +16,11 @@ void DisplayTime(const LARGE_INTEGER& time) {
         st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 }
 
-void DisplayBinary(const UCHAR* buffer, DWORD size) {
-    for (DWORD i = 0; i < size; i++)
-        printf("%02X ", buffer[i]);
-    printf("\n");
-}
-
-void TcPrintUsage()
+void DOPrintInstruction()
 {
-    puts("Usage:");
+    puts("Welcome to Deep Ocean Service. We're excited to show you a whole new world under the water. Together, we will discover the forbidden treasures. But first, let's take a look at DeOc's instruction.");
     puts("");
-    puts("    CyStack_Endpoint_Launcher.exe [-?]");
+    puts("Usage:");
+    puts("    DOClient.exe [-?]");
     puts("     -procnoti                                get notification of processes");
 }

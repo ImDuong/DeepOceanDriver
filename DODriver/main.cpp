@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "dispatchroutine.h"
-#include "s1mplecommon.h"
+#include "drivercommon.h"
 
-#include "sysmon.h"
+#include "datastore.h"
 #include "notifyroutine.h"
-
-UNICODE_STRING devName = RTL_CONSTANT_STRING(L"\\Device\\S1mpleDevice");
-UNICODE_STRING symLink = RTL_CONSTANT_STRING(L"\\??\\S1mpleDevice");
 
 Globals g_Globals;
 
-void S1mpleUnload(_In_ PDRIVER_OBJECT DriverObject) {
+UNICODE_STRING devName = RTL_CONSTANT_STRING(L"\\Device\\DeepOceanDevice");
+UNICODE_STRING symLink = RTL_CONSTANT_STRING(L"\\??\\DeepOceanDevice");
+
+void DOUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	// undo anything done in DriverEntry in reverse order with respect to the init order in driver entry
 	
 	// unregister process notification 
@@ -31,7 +31,7 @@ void S1mpleUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	}
 
 	// free linked list for registry
-	KdPrint(("S1mple Driver unload successfully\n"));
+	KdPrint(("Deep Ocean Driver unload successfully\n"));
 }
 
 extern "C"
@@ -115,11 +115,11 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 	}
 
 	// attach operations
-	DriverObject->MajorFunction[IRP_MJ_CREATE] = S1mpleCreateClose;
-	DriverObject->MajorFunction[IRP_MJ_CLOSE] = S1mpleCreateClose;
-	DriverObject->DriverUnload = S1mpleUnload;
+	DriverObject->MajorFunction[IRP_MJ_CREATE] = DOCreateAndClose;
+	DriverObject->MajorFunction[IRP_MJ_CLOSE] = DOCreateAndClose;
+	DriverObject->DriverUnload = DOUnload;
 
-	DriverObject->MajorFunction[IRP_MJ_READ] = SysMonRead;
-	KdPrint(("S1mple Driver init successfully\n"));
+	DriverObject->MajorFunction[IRP_MJ_READ] = DODirectIOWrite;
+	KdPrint(("Deep Ocean Driver init successfully\n"));
 	return STATUS_SUCCESS;
 }
