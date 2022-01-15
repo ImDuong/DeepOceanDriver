@@ -22,12 +22,17 @@ void DOUnload(_In_ PDRIVER_OBJECT DriverObject) {
 	// delete device object
 	IoDeleteDevice(DriverObject->DeviceObject);
 
-	// free linked list
-	// because we already unregister process, thread, image load notification -> no need to acquire mutex for freeing linked list
-	while (!IsListEmpty(&g_Globals.ItemsHead)) {
-		auto entry = RemoveHeadList(&g_Globals.ItemsHead);
+	// free process noti linked list
+	while (!IsListEmpty(&g_Globals.ProcNotiItemsHead)) {
+		auto entry = RemoveHeadList(&g_Globals.ProcNotiItemsHead);
 		// thanks to the power of inheritance in Cpp, we can access the base structure with an abstract template
-		ExFreePool(CONTAINING_RECORD(entry, FullItem<ItemHeader>, Entry));
+		ExFreePool(CONTAINING_RECORD(entry, DOItem<ItemHeader>, Entry));
+	}
+
+	// free blocking process linked list
+	while (!IsListEmpty(&g_Globals.ProgItemsHead)) {
+		auto entry = RemoveHeadList(&g_Globals.ProgItemsHead);
+		ExFreePool(CONTAINING_RECORD(entry, DOItem<ProcessMonitorInfo>, Entry));
 	}
 
 	// free linked list for registry
@@ -117,6 +122,7 @@ DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
 	// attach operations
 	DriverObject->MajorFunction[IRP_MJ_CREATE] = DOCreateAndClose;
 	DriverObject->MajorFunction[IRP_MJ_CLOSE] = DOCreateAndClose;
+	DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = DODeviceControl;
 	DriverObject->DriverUnload = DOUnload;
 
 	DriverObject->MajorFunction[IRP_MJ_READ] = DODirectIOWrite;

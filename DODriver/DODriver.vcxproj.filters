@@ -29,6 +29,18 @@
     <Filter Include="Source Files\mutex">
       <UniqueIdentifier>{a30033f0-838e-4156-b7aa-2af2d413b1dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lib">
+      <UniqueIdentifier>{a852a9cd-e5ff-40ec-850e-d1383768e5b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lib">
+      <UniqueIdentifier>{8fa86f62-3d64-4b87-a642-0fd2b14821ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helpers">
+      <UniqueIdentifier>{273c38e9-5d6e-43da-ae3b-b7c57b5847ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\helpers">
+      <UniqueIdentifier>{2f4c50f2-1318-4b10-9f94-9d5fabcf6ee4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -45,6 +57,15 @@
     </ClCompile>
     <ClCompile Include="fastmutex.cpp">
       <Filter>Source Files\mutex</Filter>
+    </ClCompile>
+    <ClCompile Include="csstring.cpp">
+      <Filter>Source Files\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="linkedlisthelpers.cpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="commonhelpers.cpp">
+      <Filter>Source Files\helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +89,15 @@
     </ClInclude>
     <ClInclude Include="fastmutex.h">
       <Filter>Header Files\mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="csstring.h">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="linkedlisthelpers.h">
+      <Filter>Header Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="commonhelpers.h">
+      <Filter>Header Files\helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

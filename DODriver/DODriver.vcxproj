@@ -176,7 +176,10 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="commonhelpers.cpp" />
+    <ClCompile Include="csstring.cpp" />
     <ClCompile Include="fastmutex.cpp" />
+    <ClCompile Include="linkedlisthelpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="notifyroutine.cpp" />
     <ClCompile Include="pch.cpp">
@@ -187,8 +190,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="autolock.h" />
+    <ClInclude Include="commonhelpers.h" />
+    <ClInclude Include="csstring.h" />
     <ClInclude Include="dispatchroutine.h" />
     <ClInclude Include="fastmutex.h" />
+    <ClInclude Include="linkedlisthelpers.h" />
     <ClInclude Include="notifyroutine.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="drivercommon.h" />

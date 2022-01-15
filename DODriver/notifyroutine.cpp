@@ -10,25 +10,25 @@ extern Globals g_Globals;
 void PushItem(LIST_ENTRY* entry) {
 	// since linked list may be accessed concurrently by multiple threads, protect it with a mutex or a fast mutex
 	// lock the fast mutex
-	AutoLock<FastMutex> lock(g_Globals.NotiLock);
-	if (g_Globals.ItemCount > MAX_ITEM_COUNT) {
+	AutoLock<FastMutex> lock(g_Globals.ProcNotiLock);
+	if (g_Globals.ProcNotiItemsCount> MAX_PROC_NOTI_COUNT) {
 		// too many items, remove oldest one
-		auto head = RemoveHeadList(&g_Globals.ItemsHead);
-		g_Globals.ItemCount--;
+		auto head = RemoveHeadList(&g_Globals.ProcNotiItemsHead);
+		g_Globals.ProcNotiItemsCount--;
 
-		// 1. because the `head` aka Entry is a field of FullItem<T>, instead of freeing the memory of `head`, we need to free entire its instance of FullItem<T>  
+		// 1. because the `head` aka Entry is a field of DOItem<T>, instead of freeing the memory of `head`, we need to free entire its instance of DOItem<T>  
 		// 2. which template T should we find? 
 		// - ProcessExitInfo or ProcessCreateInfo, they both ok
 		// - but to store them both in a same linked list, we can use ItemHeader as template T
 		// - the above approach is only for Cpp coding style. In C coding style, there's no such thing called inheritance -> we have to specify which type of template we want to get
-		// get the address of an instance of FullItem<ItemHeader> which contains the removed `head`
-		auto item = CONTAINING_RECORD(head, FullItem<ItemHeader>, Entry);
-		// free the instance of FullItem<ItemHeader>
+		// get the address of an instance of DOItem<ItemHeader> which contains the removed `head`
+		auto item = CONTAINING_RECORD(head, DOItem<ItemHeader>, Entry);
+		// free the instance of DOItem<ItemHeader>
 		ExFreePool(item);
 	}
 	// add the entry to the end of global list
-	InsertTailList(&g_Globals.ItemsHead, entry);
-	g_Globals.ItemCount++;
+	InsertTailList(&g_Globals.ProcNotiItemsHead, entry);
+	g_Globals.ProcNotiItemsCount++;
 
 	// when out of scope, AutoLock call its destructor, then the fast mutex would be unlock
 }
@@ -39,19 +39,19 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 	if (CreateInfo) {
 		// process create
 
-		// allocate the total size of allocation for FullItem<T>
-		USHORT allocSize = sizeof(FullItem<ProcessCreateInfo>);
+		// allocate the total size of allocation for DOItem<T>
+		USHORT allocSize = sizeof(DOItem<ProcessCreateInfo>);
 		USHORT commandLineSize = 0;
 
 		if (CreateInfo->CommandLine) {
 			// set the size of cmd
 			commandLineSize = CreateInfo->CommandLine->Length;
 			// if there's cmd, the total size also includes the length of command line
-			// why? we are going to insert the cmd to the end of FullItem<T> -> we have to allocate the memory for both of them
+			// why? we are going to insert the cmd to the end of DOItem<T> -> we have to allocate the memory for both of them
 			allocSize += commandLineSize;
 		}
 		// get an obj of FullIteam with template as ProcessCreateInfo
-		auto info = (FullItem<ProcessCreateInfo>*)ExAllocatePoolWithTag(PagedPool,
+		auto info = (DOItem<ProcessCreateInfo>*)ExAllocatePoolWithTag(PagedPool,
 			allocSize, DRIVER_TAG);
 		if (info == nullptr) {
 			KdPrint(("failed allocation\n"));
@@ -87,8 +87,8 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 	else {
 		// process exit
 		// get an obj of FullIteam with template as ProcessExitInfo
-		auto info = (FullItem<ProcessExitInfo>*)ExAllocatePoolWithTag(PagedPool,
-			sizeof(FullItem<ProcessExitInfo>), DRIVER_TAG);
+		auto info = (DOItem<ProcessExitInfo>*)ExAllocatePoolWithTag(PagedPool,
+			sizeof(DOItem<ProcessExitInfo>), DRIVER_TAG);
 		if (info == nullptr) {
 			KdPrint(("failed allocation\n"));
 			return;
@@ -105,7 +105,7 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 		item.Size = sizeof(ProcessExitInfo);
 
 		// push data to linked list
-		// our global linked list will contain only entry of FullItem<ProcessExitInfo>
+		// our global linked list will contain only entry of DOItem<ProcessExitInfo>
 		PushItem(&info->Entry);
 	}
 }
