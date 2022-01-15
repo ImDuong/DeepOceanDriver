@@ -18,13 +18,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kernelcomm.cpp">
+    <ClCompile Include="kernelgateway.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dofeature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,10 +38,13 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kernelcomm.h">
+    <ClInclude Include="kernelgateway.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="datastore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dofeature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,4 +23,6 @@ void DOPrintInstruction()
     puts("Usage:");
     puts("    DOClient.exe [-?]");
     puts("     -procnoti                                get notification of processes");
+    puts("     -progblock                               prevent program from starting");
+    puts("     -progunblock                             allow program to start");
 }
