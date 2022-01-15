@@ -44,7 +44,7 @@ void OnProcessNotify(_Inout_ PEPROCESS Process, _In_ HANDLE ProcessId, _Inout_op
 		if (g_Globals.ProgItemsCount > 0) {
 			if (CreateInfo->FileOpenNameAvailable && CreateInfo->ImageFileName)
 			{
-				KdPrint((DO_DRIVER_PREFIX "ImageFilePath: %wZ\n", CreateInfo->ImageFileName));
+				//KdPrint((DO_DRIVER_PREFIX "ImageFilePath: %wZ\n", CreateInfo->ImageFileName));
 
 				AutoLock<FastMutex> lock(g_Globals.ProgLock);
 

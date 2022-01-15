@@ -3,6 +3,9 @@
 #include "kernelgateway.h"
 #include "dofeature.h"
 #include "helpers.h"
+#include <string>
+
+#define DO_HELPER_FILEPATH L"DOClientHelper.exe"
 
 void DisplayNotification(BYTE* buffer, DWORD size) {
     auto count = size;
@@ -24,11 +27,27 @@ void DisplayNotification(BYTE* buffer, DWORD size) {
             } else if (info->Status == ItemStatus::Blocked) {
                 printf("\n\t> Block Process %d in creation.\n\t> Command line: %ws\n", info->ProcessId,
                     commandline.c_str());
+                // display noti for registerd process in popup (Windows 10 - powershell)
+                // check if our helper program exist
+                GetFileAttributes(DO_HELPER_FILEPATH); // from winbase.h
+                if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(DO_HELPER_FILEPATH) && GetLastError() == ERROR_FILE_NOT_FOUND)
+                {
+                    //File not found
+                }
+                else {
+                    // dirty process call (so much potential severity right here)
+                    std::wstring helperfile(DO_HELPER_FILEPATH);
+                    std::string processcall(helperfile.begin(), helperfile.end());
+                    std::string cmd(commandline.begin(), commandline.end());
+                    processcall += " -t \"Block process " + std::to_string(info->ProcessId) + "\" -c \"Command line: " + cmd + " [WATERMARKPENDING.................................................................................................................................................................................................................]\n\n\n\n\"";
+                    std::wstring processcallWide(processcall.begin(), processcall.end());
+                    WinExec(processcall.c_str(), SW_SHOWMINIMIZED);
+                }
             } else {
                 printf("\n\t> Status unknown for Process %d in creation.\n\t> Command line: %ws\n", info->ProcessId,
                     commandline.c_str());
             }
-            // todo: display noti for registerd process in popup (Windows 10 - powershell)
+
             break;
         }
         case ItemType::ProcessExit:
