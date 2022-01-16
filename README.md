@@ -2,6 +2,7 @@
 
 ## Tl;dr
 - Simple project in `Windows 10 x64 architecture` contains `kernel driver` and `user mode client` for viewing `process creation/destruction notification` and preventing program paths if needed.
+- Feel free to leave a star and fork the repo for a quick start up with Windows Kernel Driver.
 
 ## Overview
 - This repo represents our School Project for Course `System Programming` in `RHUST`. Therefore, the main goal is to revise & share knowledge with system internals and kernel driver, specifically.
