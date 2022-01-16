@@ -1,7 +1,7 @@
 # Deep Ocean Solution
 
 ## Tl;dr
-- Simple project in `Windows 10 x64 architecture` containing `kernel driver` and `user mode client` for viewing `process creation/destruction notification` and prevent program paths if needed.
+- Simple project in `Windows 10 x64 architecture` contains `kernel driver` and `user mode client` for viewing `process creation/destruction notification` and preventing program paths if needed.
 
 ## Overview
 - This repo represents our School Project for Course `System Programming` in `RHUST`. Therefore, the main goal is to revise & share knowledge with system internals and kernel driver, specifically.
@@ -101,7 +101,7 @@
 
 ### Requirements for Building Deep Ocean Services
 - For DODriver and DOClient, developers needs `Visual Studio 2017 / 2019` (along with `C++ workload`), `Windows 10 SDK`, `Windows 10 Driver Kit (WDK)`
-	+ After installing these prerequisites, `Empty WDM Driver` should appears a project template in `Visual Studio`
+	+ After installing these prerequisites, `Empty WDM Driver` should appear a project template in `Visual Studio`
 
 - For DOClientHelper, Golang is required to be installed (of course :v). `go mod` might take place to install the essential libraries.
 
