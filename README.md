@@ -1,4 +1,4 @@
-# DeepOceanDriver
+# Deep Ocean Solution
 
 ## Tl;dr
 - Simple project in `Windows 10 x64 architecture` containing `kernel driver` and `user mode client` for viewing `process creation/destruction notification` and prevent program paths if needed.
@@ -67,7 +67,7 @@
 	```
 - In the end, restart machine so the above configurations would affect after that.
 
-### Requirements for Debugging Deep OCean Services
+### Requirements for Debugging Deep Ocean Services
 - Not only the above steps for running services are required, setting port for the machine is also essential to enable debugging.
 - Currently, `Microsoft` supports both debugging on real machine and virtual machine. For the sake of simplicity, we only demonstrate the way to enable debugging in `VMWare`
 - There are two common types of debugging which are local Kernel Debugging (LKD) and Full Kernel Debugging. LKD cannot help us in setting breakpoints (because when we reach breakpoint, the kernel is paused and LKD also freeze). Hence, we focus on setup 2 machines: 1 machine for setting `WinDbg`, 1 virtual machine to run services
@@ -143,3 +143,12 @@
 
 # Reference
 - Windows Kernel Programming Book by Pavel Yosifovich
+- https://www.triplefault.io/2017/07/setting-up-kernel-debugging-using.html (for setting up kernel debugging using WinDbg and VMware)
+- https://www.osr.com/getting-started-writing-windows-drivers/
+- Windows Internals 7th Edition — Part 1
+- Windows System Programming 4th Edition
+- https://github.com/microsoft/Windows-driver-samples
+- http://www.osronline.com/article.cfm%5Earticle=499.htm (Windows Doubly Linked List basic concepts)
+- https://osm.hpi.de/research/WRK/2009/07/single_list_entry-containing_record/ (Windows Doubly Linked List essential functions)
+- https://www.codeproject.com/Articles/800404/Understanding-LIST-ENTRY-Lists-and-Its-Importance (Windows Linked List and windbg tutorial)
+- https://dennisspan.com/analyzing-system-crashes-on-non-persistent-machines/ (analyze system crash on machines)
